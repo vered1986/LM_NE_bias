@@ -2,7 +2,10 @@
 
 This repository contains the experiments used in the paper:
 
-**"You are grounded!": Latent Name Artifacts in Pre-trained Language Models.** *Vered Shwartz, Rachel Rudinger, and Oyvind Tafjord*. arXiv 2020. 
+**"You are grounded!": Latent Name Artifacts in Pre-trained Language Models.** 
+
+*Vered Shwartz, Rachel Rudinger, and Oyvind Tafjord*. arXiv 2020. 
+
 
 ### 1. Last Name Prediction:
 
@@ -10,7 +13,7 @@ Run the script `predict_last_name.sh`. It will produce the file `data/all_names_
 
 ### 2. Given Name Recovery:
 
-Run the script `predict_given_name.sh [device]` with a GPU number of "cpu". It will save the results in a json file for each language model under `results`.
+Run the script `predict_given_name.sh [device]` with a GPU number or "cpu". It will save the results in a json file for each language model under `results`.
 
 ### 3. Sentiment Analysis:
 
