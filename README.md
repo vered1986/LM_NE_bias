@@ -29,7 +29,7 @@ The `downstream` directory contains the templates, sampled names to assign to th
 Please cite this repository using the following reference:
 
 ```
-@inproceedings{Bosselut2019COMETCT,
+@inproceedings{you_are_grounded_2020,
   title={``You are grounded!'': Latent Name Artifacts in Pre-trained Language Models},
   author={Vered Shwartz and Rachel Rudinger and Oyvind Tafjord},
   booktitle={arXiv},
