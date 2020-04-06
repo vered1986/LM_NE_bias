@@ -17,7 +17,7 @@ Run the script `predict_given_name.sh [device]` with a GPU number or "cpu". It w
 
 ### 3. Sentiment Analysis:
 
-Run the script `sentiment_analysis.py`. It will produce the LaTex table with the results. 
+Using the names generated for the previous step, run the script `sentiment_analysis.py`. It will produce the LaTex table with the results. 
 
 ### 4. Effect on Downstream Tasks:
 
