@@ -11,6 +11,7 @@ import numpy as np
 import torch.nn.functional as F
 
 from tqdm import trange
+from pathlib import Path
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 from transformers import XLNetLMHeadModel, XLNetTokenizer
 from transformers import TransfoXLLMHeadModel, TransfoXLTokenizer

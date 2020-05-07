@@ -77,7 +77,7 @@ def to_latex_table(results, news_names, k=10):
         print("\cmidrule(lr){" + str(i) + "-" + str(i + 1) + "}")
 
     s = """\\textbf{Name} & $\mathbf{F_1}$"""
-    print(" & ".join([s] * len(model_names)), end=" \\\\ \n")
+    print(" & ".join([s] * len(order)), end=" \\\\ \n")
     print('\midrule')
 
     top_k = {model_name: sorted(curr_results, key=lambda x: x[1], reverse=True)[:k]
