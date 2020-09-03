@@ -1,3 +1,4 @@
+import os
 import math
 import json
 import tqdm
@@ -26,15 +27,19 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name", type=str, required=True, help="LM name")
     parser.add_argument("--device", default='cuda:0', type=str, required=False, help="CPU/GPU device")
-    parser.add_argument("--out_dir", default='results', type=str,
-                        required=False, help="The results directory. Saves one file per model.")
+    parser.add_argument("--input_dir", default="is_a_endings", type=str, required=False, help="Input directory")
     parser.add_argument("--include_bert", action="store_true", help="include a BERT-based classifier.")
     args = parser.parse_args()
     logger.debug(args)
 
-    with open(f'{args.out_dir}/{args.model_name}.jsonl', 'w') as f_out:
+    out_dir = args.input_dir + "_results"
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+
+    with open(f'{out_dir}/{args.model_name}.jsonl', 'w') as f_out:
         for gender, name_repl in [('male', 'David'), ('female', 'Mary')]:
-            for curr_names, train, val, test in split_to_train_val_test(args.model_name, [gender], name_repl=name_repl):
+            for curr_names, train, val, test in split_to_train_val_test(
+                    args.input_dir, args.model_name, [gender], name_repl=name_repl):
                 (train_X, train_y), (val_X, val_y), (test_X, test_y) = zip(*train), zip(*val), zip(*test)
 
                 majority_test_predictions, p, r, f1 = majority_baseline(train_X, train_y, val_X, val_y, test_X, test_y)
@@ -66,14 +71,14 @@ def main():
                     f_out.flush()
 
 
-def split_to_train_val_test(model_name, attributes, name_repl=None):
+def split_to_train_val_test(input_dir, model_name, attributes, name_repl=None):
     """
     For a given model name (e.g. "gpt2-xl") and attributes (e.g. ["male"])
     Get all the endings of items with these attributes labeled with their names.
     Split to train (80%), test (10%), and validation(10%).
     If name_repl is not None, [NAME] will be replaced by this string.
     """
-    all_endings = [json.loads(line.strip()) for line in open(f'is_a_endings/{model_name}.jsonl')]
+    all_endings = [json.loads(line.strip()) for line in open(f'{input_dir}/{model_name}.jsonl')]
     all_endings = [e for e in all_endings if set(attributes).issubset(set(e["attributes"]))]
 
     by_name = defaultdict(list)

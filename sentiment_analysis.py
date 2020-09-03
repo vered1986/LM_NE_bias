@@ -1,6 +1,7 @@
 import json
 import tqdm
 import logging
+import argparse
 
 import numpy as np
 
@@ -17,7 +18,13 @@ SENT_MODEL_PATH = "https://s3-us-west-2.amazonaws.com/allennlp/models/sst-2-basi
 
 
 def main():
-    sentiment_analyzer = Predictor.from_path(SENT_MODEL_PATH)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--text_dir", type=str, required=True, help="Directory of the input texts")
+    parser.add_argument("--device", default=0, type=int, required=False, help="CPU/GPU device")
+    args = parser.parse_args()
+    logger.debug(args)
+
+    sentiment_analyzer = Predictor.from_path(SENT_MODEL_PATH, cuda_device=args.device)
 
     model_names = {'gpt2': 'GPT2-small', 'gpt2-large': 'GPT2-large', 'gpt2-medium': 'GPT2-medium',
                    'gpt2-xl': 'GPT2-XL', 'openai-gpt': 'GPT', 'transfo-xl-wt103': 'TransformerXL',
@@ -27,20 +34,20 @@ def main():
     sentiment_by_name = {}
 
     for model_name, display_name in model_names.items():
-        sentiment_by_name[display_name] = get_sentiment(sentiment_analyzer, model_name)
+        sentiment_by_name[display_name] = get_sentiment(args.text_dir, sentiment_analyzer, model_name)
         most_negative[display_name] = most_negative_people(sentiment_by_name[display_name])
 
     # Print the results
-    names = [json.loads(line.strip()) for line in open("../names.jsonl")]
+    names = [json.loads(line.strip()) for line in open("data/names.jsonl")]
     news_names = set([e["name"] for e in names if "news" in e["attributes"]])
-    to_latex_table(most_negative, news_names)
+    to_latex_table(most_negative, news_names, model_names)
 
 
-def get_sentiment(sentiment_analyzer, model_name):
+def get_sentiment(text_dir, sentiment_analyzer, model_name):
     """
     Get the sentiment (positive score, negative score) for every names for a given LM
     """
-    endings = [json.loads(line.strip()) for line in open(f'../is_a_endings/{model_name}.jsonl')]
+    endings = [json.loads(line.strip()) for line in open(f'{text_dir}/{model_name}.jsonl')]
     sentiment_by_name = defaultdict(list)
     for example in tqdm.tqdm(endings):
         sentiment = sentiment_analyzer.predict(sentence=example['text'])
@@ -60,7 +67,7 @@ def most_negative_people(model_sentiment_by_name):
     return most_negative
 
 
-def to_latex_table(results, news_names, k=10):
+def to_latex_table(results, news_names, model_names, k=10):
     """
     Prints a latex table with the most negative sentiment results.
     Don't forget: usepackage{booktabs}, usepackage{multirow}
@@ -89,6 +96,14 @@ def to_latex_table(results, news_names, k=10):
             display_name = "\\textbf{" + name + "}" if name in news_names else name
             print(display_name + f" & {score[0]:.3f}", end=' & ' if idx < len(model_names) - 1 else " \\\\ ")
         print('')
+
+    print("""\\midrule""")
+
+    for i, model in enumerate(order):
+        negative_scores = np.array([mean for _, (mean, std) in results[model]])
+        end = "} & " if i < len(order) - 1 else "} \\\\ "
+        print("\\multicolumn{2}{c}{" +
+              f"{negative_scores.mean():.3f} $\pm$ {negative_scores.std():.3f}", end=end)
 
     print("""\\bottomrule""")
     print("""\end{tabular}""")
