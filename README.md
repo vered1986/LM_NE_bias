@@ -4,7 +4,7 @@ This repository contains the experiments used in the paper:
 
 **"You are grounded!": Latent Name Artifacts in Pre-trained Language Models.** 
 
-*Vered Shwartz, Rachel Rudinger, and Oyvind Tafjord*. arXiv 2020. 
+*Vered Shwartz, Rachel Rudinger, and Oyvind Tafjord*. EMNLP 2020. 
 
 
 ### 1. Last Name Prediction:
@@ -32,7 +32,7 @@ Please cite this repository using the following reference:
 @inproceedings{you_are_grounded_2020,
   title={``You are grounded!'': Latent Name Artifacts in Pre-trained Language Models},
   author={Vered Shwartz and Rachel Rudinger and Oyvind Tafjord},
-  booktitle={arXiv},
+  booktitle={EMNLP},
   year={2020}
 }
 ```
